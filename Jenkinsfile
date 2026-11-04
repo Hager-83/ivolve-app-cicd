@@ -1,3 +1,4 @@
+
 pipeline {
     agent any
 
@@ -24,7 +25,12 @@ pipeline {
                 }
 
                 script {
-                    env.IMAGE_TAG = "${env.BUILD_NUMBER}-${env.GIT_COMMIT.take(7)}"
+                    def shortCommit = sh(
+                        script: 'git rev-parse --short=7 HEAD',
+                        returnStdout: true
+                    ).trim()
+
+                    env.IMAGE_TAG = "${env.BUILD_NUMBER}-${shortCommit}"
                     env.FULL_IMAGE = "${env.IMAGE_REPO}:${env.IMAGE_TAG}"
                 }
 
@@ -61,7 +67,7 @@ pipeline {
                 ]) {
                     sh '''
                         set +x
-                        echo "$DOCKER_TOKEN" | docker login \
+                        printf '%s' "$DOCKER_TOKEN" | docker login \
                           --username "$DOCKER_USER" \
                           --password-stdin
 
