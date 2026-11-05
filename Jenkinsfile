@@ -2,7 +2,9 @@
 @Library('ivolve-shared-library@main') _
 
 pipeline {
-    agent any
+    agent {
+        label 'docker-k8s'
+    }
 
     options {
         timestamps()
@@ -11,7 +13,7 @@ pipeline {
     }
 
     environment {
-        KUBECTL = '/usr/local/bin/kubectl-1.35'
+        KUBECTL = '/usr/local/bin/kubectl'
     }
 
     stages {
@@ -44,7 +46,7 @@ pipeline {
                     deployment: 'ivolveapp',
                     container: 'ivolve-app',
                     manifest: 'kubernetes/deployment.yaml',
-                    kubeCredentials: 'kubeconfig-ivolve',
+                    kubeCredentials: 'kubeconfig-ivolve-agent',
                     kubectl: env.KUBECTL
                 )
             }
