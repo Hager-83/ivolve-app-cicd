@@ -61,7 +61,7 @@ pipeline {
 
             sh 'docker logout >/dev/null 2>&1 || true'
 
-            cleanWs()
+            // cleanWs()
         }
     }
 }
