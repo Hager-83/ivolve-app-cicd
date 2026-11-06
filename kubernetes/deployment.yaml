@@ -96,7 +96,7 @@ spec:
 
       containers:
         - name: ivolve-app
-          image: hager83/ivolve-app:26-b4090ef
+          image: hager83/ivolve-app:27-402aef8
           imagePullPolicy: Always
 
           ports:
