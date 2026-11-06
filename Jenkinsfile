@@ -12,10 +12,6 @@ pipeline {
         skipDefaultCheckout(true)
     }
 
-    environment {
-        KUBECTL = '/usr/local/bin/kubectl'
-    }
-
     stages {
 
         stage('Build App') {
@@ -39,15 +35,12 @@ pipeline {
             }
         }
 
-        stage('Deploy to Kubernetes') {
+        stage('Update GitOps Manifest') {
             steps {
-                deployOnK8s(
-                    namespace: 'ivolve',
-                    deployment: 'ivolveapp',
-                    container: 'ivolve-app',
+                updateGitOpsManifest(
                     manifest: 'kubernetes/deployment.yaml',
-                    kubeCredentials: 'kubeconfig-ivolve-agent',
-                    kubectl: env.KUBECTL
+                    container: 'ivolve-app',
+                    gitCredentials: 'github-private-repos'
                 )
             }
         }
@@ -55,7 +48,8 @@ pipeline {
 
     post {
         success {
-            echo "SUCCESS: ${env.FULL_IMAGE} deployed to Kubernetes."
+            echo "SUCCESS: ${env.FULL_IMAGE} pushed to Docker Hub and GitOps manifest updated."
+            echo "Argo CD is responsible for Kubernetes deployment."
         }
 
         failure {
